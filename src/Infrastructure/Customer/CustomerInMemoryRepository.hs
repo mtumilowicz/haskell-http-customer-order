@@ -28,12 +28,14 @@ instance CustomerRepository CustomerInMemoryRepository where
       Nothing -> throwError $ CustomerNotFound cid
 
   saveCustomer :: CustomerInMemoryRepository -> Customer -> ExceptT CustomerAlreadyExists IO Customer
-  saveCustomer repo customer = do
-    let customersRef = repoData repo
-    let cid = customerId customer
-    liftIO $ modifyMVar customersRef $ \customers ->
+  saveCustomer repo customer =
+    do
+      let customersRef = repoData repo
+      let cid = customerId customer
+      liftIO $ modifyMVar customersRef $ \customers ->
         if HM.member cid customers
-            then return (customers, Left $ CustomerAlreadyExists cid)
-            else let newCustomers = HM.insert cid customer customers
-                  in return (newCustomers, Right customer)
-    >>= either throwError return
+          then return (customers, Left $ CustomerAlreadyExists cid)
+          else
+            let newCustomers = HM.insert cid customer customers
+             in return (newCustomers, Right customer)
+      >>= either throwError return

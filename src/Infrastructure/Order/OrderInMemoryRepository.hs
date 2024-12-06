@@ -28,12 +28,14 @@ instance OrderRepository OrderInMemoryRepository where
       Nothing -> throwError $ OrderNotFound oid
 
   saveOrder :: OrderInMemoryRepository -> Order -> ExceptT OrderAlreadyExists IO Order
-  saveOrder repo order = do
-    let ordersRef = repoData repo
-    let oid = orderId order
-    liftIO $ modifyMVar ordersRef $ \orders ->
+  saveOrder repo order =
+    do
+      let ordersRef = repoData repo
+      let oid = orderId order
+      liftIO $ modifyMVar ordersRef $ \orders ->
         if HM.member oid orders
-            then return (orders, Left $ OrderAlreadyExists oid)
-            else let newOrders = HM.insert oid order orders
-                  in return (newOrders, Right order)
-    >>= either throwError return
+          then return (orders, Left $ OrderAlreadyExists oid)
+          else
+            let newOrders = HM.insert oid order orders
+             in return (newOrders, Right order)
+      >>= either throwError return
