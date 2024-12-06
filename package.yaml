@@ -1,0 +1,79 @@
+name:                haskell-http-customer-order
+version:             0.1.0.0
+github:              "githubuser/haskell-http-customer-order"
+license:             BSD-3-Clause
+author:              "Author name here"
+maintainer:          "example@example.com"
+copyright:           "2024 Author name here"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/haskell-http-customer-order#readme>
+
+dependencies:
+- base ^>= 4.18.2.1
+- aeson ^>= 2.1.2.1
+- bytestring ^>= 0.11.5.3
+- directory ^>= 1.3.8.5
+- generic-lens ^>= 2.2.2.0
+- hashable ^>= 1.4.4.0
+- lens ^>= 5.2.3
+- mtl ^>= 2.3.1
+- servant-server ^>= 0.20.2
+- unordered-containers ^>= 0.2.20
+- uuid ^>= 1.3.15
+- wai ^>= 3.2.4
+- warp ^>= 3.3.31
+- yaml ^>= 0.11.11.2
+
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Werror
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+
+executables:
+  haskell-http-customer-order-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - haskell-http-customer-order
+
+tests:
+  haskell-http-customer-order-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - haskell-http-customer-order
+    - QuickCheck ^>= 2.14.3
+    - generic-arbitrary ^>= 1.0.1
+    - hspec ^>= 2.11.10
+    - http-client ^>= 0.7
+    - servant-client ^>= 0.20.2

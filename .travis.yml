@@ -1,0 +1,10 @@
+before_install:
+  - curl -sSL https://get.haskellstack.org/ | sh
+
+install:
+  - stack setup
+  - stack build --only-dependencies
+
+script:
+  - stack build
+  - stack test
