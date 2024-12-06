@@ -31,12 +31,9 @@ instance CustomerRepository CustomerInMemoryRepository where
   saveCustomer repo customer = do
     let customersRef = repoData repo
     let cid = customerId customer
-    customers <- liftIO $ takeMVar customersRef
-    if HM.member cid customers
-      then do
-        liftIO $ putMVar customersRef customers
-        throwError $ CustomerAlreadyExists cid
-      else do
-        let newCustomers = HM.insert cid customer customers
-        liftIO $ putMVar customersRef newCustomers
-        return customer
+    liftIO $ modifyMVar customersRef $ \customers ->
+        if HM.member cid customers
+            then return (customers, Left $ CustomerAlreadyExists cid)
+            else let newCustomers = HM.insert cid customer customers
+                  in return (newCustomers, Right customer)
+    >>= either throwError return

@@ -31,12 +31,9 @@ instance OrderRepository OrderInMemoryRepository where
   saveOrder repo order = do
     let ordersRef = repoData repo
     let oid = orderId order
-    orders <- liftIO $ takeMVar ordersRef
-    if HM.member oid orders
-      then do
-        liftIO $ putMVar ordersRef orders
-        throwError $ OrderAlreadyExists oid
-      else do
-        let newOrders = HM.insert oid order orders
-        liftIO $ putMVar ordersRef newOrders
-        return order
+    liftIO $ modifyMVar ordersRef $ \orders ->
+        if HM.member oid orders
+            then return (orders, Left $ OrderAlreadyExists oid)
+            else let newOrders = HM.insert oid order orders
+                  in return (newOrders, Right order)
+    >>= either throwError return

@@ -24,13 +24,13 @@ hexagonal architecture (port & adapters) with concepts separation
 * `stack run`
     ```
     curl -X POST \
-      http://localhost:8080/customers \    
-      -H 'Content-Type: application/json' \
+      "http://localhost:8080/customers" \
+      -H "Content-Type: application/json" \
       -d '{"name": "Alice"}'
     ```
     ```
     curl -X POST \
-      http://localhost:8080/orders \
-      -H 'Content-Type: application/json' \
-      -d '{"name": "Alice"}'
+      "http://localhost:8080/orders" \
+      -H "Content-Type: application/json" \
+      -d '{"name": "Macbook"}'
     ```
