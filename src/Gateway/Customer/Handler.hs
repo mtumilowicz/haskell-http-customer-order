@@ -4,8 +4,7 @@
 {-# LANGUAGE TypeOperators #-}
 
 module Gateway.Customer.Handler
-  ( customerApi,
-    handler,
+  ( handler,
     CustomerApiOutput,
     CreateCustomerApiInput,
     CustomerAPI,
@@ -27,9 +26,6 @@ import Servant
 type CustomerAPI =
   "customers" :> Capture "customerId" String :> Get '[JSON] CustomerApiOutput
     :<|> "customers" :> ReqBody '[JSON] CreateCustomerApiInput :> Post '[JSON] CustomerApiOutput
-
-customerApi :: Proxy CustomerAPI
-customerApi = Proxy
 
 handler :: CustomerService IO -> Server CustomerAPI
 handler service = getCustomerHandler :<|> createCustomerHandler

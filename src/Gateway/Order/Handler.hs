@@ -28,9 +28,6 @@ type OrderAPI =
   "orders" :> Capture "orderId" String :> Get '[JSON] OrderApiOutput
     :<|> "orders" :> ReqBody '[JSON] CreateOrderApiInput :> Post '[JSON] OrderApiOutput
 
-orderApi :: Proxy OrderAPI
-orderApi = Proxy
-
 handler :: OrderService IO -> Server OrderAPI
 handler service = getOrderHandler :<|> createOrderHandler
   where

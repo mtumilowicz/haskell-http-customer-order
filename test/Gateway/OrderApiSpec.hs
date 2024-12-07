@@ -57,6 +57,8 @@ spec = describe "Gateway.Order.Handler Integration Tests" $ around (testWithAppl
     -- then
     show getOrderError `shouldContain` "404"
   where
+    orderApi :: Proxy OrderAPI
+    orderApi = Proxy
     getOrderClient :<|> createOrderClient = Client.client orderApi
     orderService = mkOrderService <$> OrderRepository.newInMemoryRepository
     app = orderService <&> (serve orderApi . handler)

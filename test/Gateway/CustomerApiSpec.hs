@@ -57,6 +57,8 @@ spec = describe "Gateway.Customer.Handler Integration Tests" $ around (testWithA
     -- then
     show getCustomerError `shouldContain` "404"
   where
+    customerApi :: Proxy CustomerAPI
+    customerApi = Proxy
     getCustomerClient :<|> createCustomerClient = Client.client customerApi
     customerService = mkCustomerService <$> CustomerRepository.newInMemoryRepository
     app = customerService <&> (serve customerApi . handler)
