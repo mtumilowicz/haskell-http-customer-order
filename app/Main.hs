@@ -5,10 +5,10 @@ module Main (main) where
 
 import Control.Monad.Except (runExceptT)
 import Domain.Customer.CustomerRepository as CustomerRepository
-import Domain.Order.OrderRepository as OrderRepository
-import Domain.Services
 import Domain.Customer.CustomerService
+import Domain.Order.OrderRepository as OrderRepository
 import Domain.Order.OrderService
+import Domain.Services
 import Gateway.AppServer
 import Infrastructure.Config (loadConfig)
 
