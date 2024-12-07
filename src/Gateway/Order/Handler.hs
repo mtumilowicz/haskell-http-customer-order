@@ -4,8 +4,7 @@
 {-# LANGUAGE TypeOperators #-}
 
 module Gateway.Order.Handler
-  ( orderApi,
-    handler,
+  ( handler,
     OrderApiOutput,
     CreateOrderApiInput,
     OrderAPI,

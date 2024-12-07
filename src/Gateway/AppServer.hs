@@ -1,4 +1,4 @@
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Gateway.AppServer
@@ -6,10 +6,7 @@ module Gateway.AppServer
   )
 where
 
-import Domain.Customer.CustomerRepository
-import Domain.Customer.CustomerService
-import Domain.Order.OrderRepository
-import Domain.Order.OrderService
+import Domain.Services
 import Gateway.Customer.Handler as CustomerHandler
 import Gateway.Order.Handler as OrderHandler
 import Infrastructure.Config
@@ -19,23 +16,18 @@ import Servant
 
 type AppAPI = CustomerAPI :<|> OrderAPI
 
-appServer :: CustomerService IO -> OrderService IO -> Server AppAPI
-appServer customerService orderService =
+appServer :: Services IO -> Server AppAPI
+appServer Services {..} =
   CustomerHandler.handler customerService
     :<|> OrderHandler.handler orderService
 
-app :: CustomerService IO -> OrderService IO -> Application
-app customerService orderService = serve (Proxy @AppAPI) (appServer customerService orderService)
+app :: Services IO -> Application
+app s = serve (Proxy :: Proxy AppAPI) (appServer s)
 
 runServer ::
-  CustomerRepository IO ->
-  OrderRepository IO ->
+  Services IO ->
   AppConfig ->
   IO ()
-runServer customerRepository orderRepo config = do
+runServer services config = do
   let serverPort = port (server config)
-
-  let customerService = mkCustomerService customerRepository
-  let orderService = mkOrderService orderRepo
-
-  run serverPort (app customerService orderService)
+  run serverPort (app services)

@@ -33,6 +33,7 @@ library
       Domain.Order.OrderRepository
       Domain.Order.OrderService
       Domain.Order.Types
+      Domain.Services
       Gateway.AppServer
       Gateway.Customer.Handler
       Gateway.Customer.In.CreateCustomerApiInput
