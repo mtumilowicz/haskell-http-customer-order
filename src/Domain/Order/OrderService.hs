@@ -10,7 +10,7 @@ import Control.Monad.Except (ExceptT)
 import Control.Monad.IO.Class (liftIO)
 import qualified Data.UUID.V4 as UUIDv4
 import Domain.Order.Errors
-import Domain.Order.OrderRepository
+import Domain.Order.OrderRepository (OrderRepository (..))
 import Domain.Order.Types
 import GHC.Generics (Generic)
 
@@ -20,14 +20,17 @@ data OrderService m = OrderService
   }
   deriving (Generic)
 
-mkOrderService :: (OrderRepository repository) => repository -> OrderService IO
+mkOrderService :: OrderRepository IO -> OrderService IO
 mkOrderService repository =
-  OrderService {findOrder = findOrder' repository, createOrder = createOrder' repository}
+  OrderService
+    { findOrder = findOrder' repository,
+      createOrder = createOrder' repository
+    }
 
-findOrder' :: (OrderRepository repository) => repository -> OrderId -> ExceptT OrderNotFound IO Order
+findOrder' :: OrderRepository IO -> OrderId -> ExceptT OrderNotFound IO Order
 findOrder' = getOrder
 
-createOrder' :: (OrderRepository repository) => repository -> CreateOrderCommand -> ExceptT OrderAlreadyExists IO Order
+createOrder' :: OrderRepository IO -> CreateOrderCommand -> ExceptT OrderAlreadyExists IO Order
 createOrder' repository command = do
   uuid <- liftIO UUIDv4.nextRandom
   let order =

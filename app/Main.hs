@@ -4,14 +4,14 @@ module Main (main) where
 
 import Control.Monad.Except (runExceptT)
 import Domain.Customer.CustomerRepository as CustomerRepository
+import Domain.Order.OrderRepository as OrderRepository
 import Gateway.AppServer
 import Infrastructure.Config (loadConfig)
-import Infrastructure.Order.OrderInMemoryRepository as OrderInMemoryRepository
 
 main :: IO ()
 main = do
   customerRepo <- CustomerRepository.newInMemoryRepository
-  orderRepo <- OrderInMemoryRepository.new
+  orderRepo <- OrderRepository.newInMemoryRepository
 
   config <-
     runExceptT (loadConfig "config.yaml") >>= \case

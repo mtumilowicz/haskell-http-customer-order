@@ -5,12 +5,12 @@ import Control.Monad.IO.Class (liftIO)
 import Data.Functor ((<&>))
 import qualified Data.UUID as UUID
 import qualified Data.UUID.V4 as UUIDv4
+import Domain.Order.OrderRepository as OrderRepository
 import Domain.Order.OrderService
 import qualified Gateway.HttpTestSetup as HttpTestSetup
 import Gateway.Order.Handler
 import Gateway.Order.In.CreateOrderApiInput as CreateOrderApiInput
 import Gateway.Order.Out.OrderApiOutput as OrderApiOutput
-import Infrastructure.Order.OrderInMemoryRepository as OrderInMemoryRepository
 import Network.Wai.Handler.Warp (testWithApplication)
 import Servant
 import qualified Servant.Client as Client
@@ -58,5 +58,5 @@ spec = describe "Gateway.Order.Handler Integration Tests" $ around (testWithAppl
     show getOrderError `shouldContain` "404"
   where
     getOrderClient :<|> createOrderClient = Client.client orderApi
-    setupInMemoryService = mkOrderService <$> OrderInMemoryRepository.new
-    app = setupInMemoryService <&> (serve orderApi . handler)
+    orderService = mkOrderService <$> OrderRepository.newInMemoryRepository
+    app = orderService <&> (serve orderApi . handler)

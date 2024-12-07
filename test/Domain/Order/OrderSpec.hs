@@ -1,22 +1,13 @@
 module Domain.Order.OrderSpec (spec) where
 
 import qualified Assertions
-import Control.Monad.Except (ExceptT, runExceptT, throwError)
+import Control.Monad.Except (runExceptT, throwError)
 import qualified Data.UUID.V4 as UUIDv4
 import Domain.Order.Errors
 import Domain.Order.OrderRepository
 import Domain.Order.OrderService
 import Domain.Order.Types
 import Test.Hspec
-
-data MockOrderRepository = MockOrderRepository
-  { mockGetOrder :: OrderId -> ExceptT OrderNotFound IO Order,
-    mockSaveOrder :: Order -> ExceptT OrderAlreadyExists IO Order
-  }
-
-instance OrderRepository MockOrderRepository where
-  getOrder = mockGetOrder
-  saveOrder = mockSaveOrder
 
 spec :: Spec
 spec = do
@@ -27,12 +18,12 @@ spec = do
       let oid = OrderId uuid
       let order = Order oid (OrderName "Macbook")
       let repo =
-            MockOrderRepository
-              { mockGetOrder = \u ->
+            OrderRepository
+              { getOrder = \u ->
                   if u == oid
                     then return order
                     else throwError $ OrderNotFound u,
-                mockSaveOrder = \_ -> return order
+                saveOrder = \_ -> return order
               }
 
       -- and
@@ -49,9 +40,9 @@ spec = do
       uuid <- UUIDv4.nextRandom
       let oid = OrderId uuid
       let repo =
-            MockOrderRepository
-              { mockGetOrder = \_ -> throwError $ OrderNotFound oid,
-                mockSaveOrder = undefined
+            OrderRepository
+              { getOrder = \_ -> throwError $ OrderNotFound oid,
+                saveOrder = undefined
               }
 
       -- and
@@ -71,9 +62,9 @@ spec = do
       let order = Order oid oname
       let command = CreateOrderCommand oname
       let repo =
-            MockOrderRepository
-              { mockGetOrder = undefined,
-                mockSaveOrder = \_ -> return order
+            OrderRepository
+              { getOrder = undefined,
+                saveOrder = \_ -> return order
               }
 
       -- and
@@ -92,9 +83,9 @@ spec = do
       let oname = OrderName "Macbook"
       let command = CreateOrderCommand oname
       let repo =
-            MockOrderRepository
-              { mockGetOrder = undefined,
-                mockSaveOrder = \_ -> throwError $ OrderAlreadyExists oid
+            OrderRepository
+              { getOrder = undefined,
+                saveOrder = \_ -> throwError $ OrderAlreadyExists oid
               }
 
       -- and

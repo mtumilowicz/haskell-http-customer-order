@@ -41,7 +41,6 @@ library
       Gateway.Order.In.CreateOrderApiInput
       Gateway.Order.Out.OrderApiOutput
       Infrastructure.Config
-      Infrastructure.Order.OrderInMemoryRepository
   other-modules:
       Paths_haskell_http_customer_order
   autogen-modules:

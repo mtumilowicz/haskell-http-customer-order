@@ -28,10 +28,8 @@ app :: CustomerService IO -> OrderService IO -> Application
 app customerService orderService = serve (Proxy @AppAPI) (appServer customerService orderService)
 
 runServer ::
-  ( OrderRepository orderRepo
-  ) =>
   CustomerRepository IO ->
-  orderRepo ->
+  OrderRepository IO ->
   AppConfig ->
   IO ()
 runServer customerRepository orderRepo config = do
