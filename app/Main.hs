@@ -3,14 +3,14 @@
 module Main (main) where
 
 import Control.Monad.Except (runExceptT)
+import Domain.Customer.CustomerRepository as CustomerRepository
 import Gateway.AppServer
 import Infrastructure.Config (loadConfig)
-import Infrastructure.Customer.CustomerInMemoryRepository as CustomerInMemoryRepository
 import Infrastructure.Order.OrderInMemoryRepository as OrderInMemoryRepository
 
 main :: IO ()
 main = do
-  customerRepo <- CustomerInMemoryRepository.new
+  customerRepo <- CustomerRepository.newInMemoryRepository
   orderRepo <- OrderInMemoryRepository.new
 
   config <-

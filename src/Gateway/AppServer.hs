@@ -28,17 +28,16 @@ app :: CustomerService IO -> OrderService IO -> Application
 app customerService orderService = serve (Proxy @AppAPI) (appServer customerService orderService)
 
 runServer ::
-  ( CustomerRepository customerRepo,
-    OrderRepository orderRepo
+  ( OrderRepository orderRepo
   ) =>
-  customerRepo ->
+  CustomerRepository IO ->
   orderRepo ->
   AppConfig ->
   IO ()
-runServer customerRepo orderRepo config = do
+runServer customerRepository orderRepo config = do
   let serverPort = port (server config)
 
-  let customerService = mkCustomerService customerRepo
+  let customerService = mkCustomerService customerRepository
   let orderService = mkOrderService orderRepo
 
   run serverPort (app customerService orderService)

@@ -5,12 +5,12 @@ import Control.Monad.IO.Class (liftIO)
 import Data.Functor ((<&>))
 import qualified Data.UUID as UUID
 import qualified Data.UUID.V4 as UUIDv4
+import Domain.Customer.CustomerRepository as CustomerRepository
 import Domain.Customer.CustomerService
 import Gateway.Customer.Handler
 import Gateway.Customer.In.CreateCustomerApiInput as CreateCustomerApiInput
 import Gateway.Customer.Out.CustomerApiOutput as CustomerApiOutput
 import qualified Gateway.HttpTestSetup as HttpTestSetup
-import Infrastructure.Customer.CustomerInMemoryRepository as CustomerInMemoryRepository
 import Network.Wai.Handler.Warp (testWithApplication)
 import Servant
 import qualified Servant.Client as Client
@@ -58,5 +58,5 @@ spec = describe "Gateway.Customer.Handler Integration Tests" $ around (testWithA
     show getCustomerError `shouldContain` "404"
   where
     getCustomerClient :<|> createCustomerClient = Client.client customerApi
-    setupInMemoryService = mkCustomerService <$> CustomerInMemoryRepository.new
-    app = setupInMemoryService <&> (serve customerApi . handler)
+    customerService = mkCustomerService <$> CustomerRepository.newInMemoryRepository
+    app = customerService <&> (serve customerApi . handler)

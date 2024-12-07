@@ -1,22 +1,13 @@
 module Domain.Customer.CustomerSpec (spec) where
 
 import qualified Assertions
-import Control.Monad.Except (ExceptT, runExceptT, throwError)
+import Control.Monad.Except (runExceptT, throwError)
 import qualified Data.UUID.V4 as UUIDv4
 import Domain.Customer.CustomerRepository
 import Domain.Customer.CustomerService
 import Domain.Customer.Errors
 import Domain.Customer.Types
 import Test.Hspec
-
-data MockCustomerRepository = MockCustomerRepository
-  { mockGetCustomer :: CustomerId -> ExceptT CustomerNotFound IO Customer,
-    mockSaveCustomer :: Customer -> ExceptT CustomerAlreadyExists IO Customer
-  }
-
-instance CustomerRepository MockCustomerRepository where
-  getCustomer = mockGetCustomer
-  saveCustomer = mockSaveCustomer
 
 spec :: Spec
 spec = do
@@ -27,12 +18,12 @@ spec = do
       let cid = CustomerId uuid
       let customer = Customer cid (CustomerName "Alice")
       let repo =
-            MockCustomerRepository
-              { mockGetCustomer = \u ->
+            CustomerRepository
+              { getCustomer = \u ->
                   if u == cid
                     then return customer
                     else throwError $ CustomerNotFound u,
-                mockSaveCustomer = \_ -> return customer
+                saveCustomer = \_ -> return customer
               }
 
       -- and
@@ -49,9 +40,9 @@ spec = do
       uuid <- UUIDv4.nextRandom
       let cid = CustomerId uuid
       let repo =
-            MockCustomerRepository
-              { mockGetCustomer = \_ -> throwError $ CustomerNotFound cid,
-                mockSaveCustomer = undefined
+            CustomerRepository
+              { getCustomer = \_ -> throwError $ CustomerNotFound cid,
+                saveCustomer = undefined
               }
 
       -- and
@@ -71,9 +62,9 @@ spec = do
       let customer = Customer cid cname
       let command = CreateCustomerCommand cname
       let repo =
-            MockCustomerRepository
-              { mockGetCustomer = undefined,
-                mockSaveCustomer = \_ -> return customer
+            CustomerRepository
+              { getCustomer = undefined,
+                saveCustomer = \_ -> return customer
               }
 
       -- and
@@ -92,9 +83,9 @@ spec = do
       let cname = CustomerName "Carol"
       let command = CreateCustomerCommand cname
       let repo =
-            MockCustomerRepository
-              { mockGetCustomer = undefined,
-                mockSaveCustomer = \_ -> throwError $ CustomerAlreadyExists cid
+            CustomerRepository
+              { getCustomer = undefined,
+                saveCustomer = \_ -> throwError $ CustomerAlreadyExists cid
               }
 
       -- and
